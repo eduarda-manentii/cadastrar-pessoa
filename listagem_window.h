@@ -32,6 +32,7 @@ class ListagemWindow : public Gtk::Window {
     ModelColumns modelColumns;
 
     Gtk::VBox box;
+    Gtk::HBox buttons_box;
     Gtk::TreeView treeview;
     Glib::RefPtr<Gtk::ListStore> listStore;
     Gtk::Button button_excluir;

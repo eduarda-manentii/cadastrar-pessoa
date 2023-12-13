@@ -9,12 +9,12 @@ void popula_pessoas(PessoasStorage& storage) {
     Pessoa p1;
     p1.nome = "Eduarda";
     p1.idade = 19;
-    ps.insere(p1);
+    storage.insere(p1);
 
     Pessoa p2;
     p2.nome = "Philipe";
     p2.idade = 37;
-    ps.insere(p2);
+    storage.insere(p2);
 }
 
 int main(int argc, char* argv[]) {

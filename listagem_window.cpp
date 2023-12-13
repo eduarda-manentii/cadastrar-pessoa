@@ -11,15 +11,26 @@ ListagemWindow::ListagemWindow(PessoasStorage& storage)
     set_title("Listagem");
     set_border_width(10);
     set_modal(true);
+    set_default_size(450, 200);
 
     treeview.set_model(listStore);
 
     treeview.append_column("Nome", modelColumns.col_nome);
     treeview.append_column("Idade", modelColumns.col_idade);
 
+    cadastro_window.signal_hide().connect([this]() {
+        preencherTabela();
+    });
+
     preencherTabela();
 
-    box.pack_start(treeview, Gtk::PACK_EXPAND_WIDGET);
+    Gtk::ScrolledWindow* scrolledWindow =
+        Gtk::manage(new Gtk::ScrolledWindow());
+    scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+
+    box.pack_start(*scrolledWindow, Gtk::PACK_EXPAND_WIDGET);
+
+    scrolledWindow->add(treeview);
 
     button_excluir.signal_clicked().connect(
         sigc::mem_fun(*this, &ListagemWindow::on_button_excluir_clicked));
@@ -27,8 +38,9 @@ ListagemWindow::ListagemWindow(PessoasStorage& storage)
     button_editar.signal_clicked().connect(
         sigc::mem_fun(*this, &ListagemWindow::on_button_editar_clicked));
 
-    box.add(button_excluir);
-    box.add(button_editar);
+    buttons_box.add(button_editar);
+    buttons_box.add(button_excluir);
+    box.pack_end(buttons_box, Gtk::PACK_SHRINK);
     add(box);
     show_all_children();
 }
@@ -83,9 +95,7 @@ void ListagemWindow::on_button_editar_clicked() {
         int id = (*iter)[modelColumns.col_id];
         cadastro_window.setModoEdicao(true, id);
         cadastro_window.show();
-        cadastro_window.signal_hide().connect([this]() {
-            preencherTabela();
-        });
+
     } else {
         Gtk::MessageDialog errorMsg(*this, "Selecione uma linha para edição.");
         errorMsg.run();

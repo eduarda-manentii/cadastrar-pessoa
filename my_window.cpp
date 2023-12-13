@@ -7,6 +7,7 @@ MyWindow::MyWindow(PessoasStorage& storage)
       cadastro_window(storage) {
     set_title("Janela Principal");
     set_border_width(10);
+    set_modal();
 
     button_cadastro.signal_clicked().connect(
         sigc::mem_fun(*this, &MyWindow::on_button_cadastro_clicked));
