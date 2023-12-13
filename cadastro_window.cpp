@@ -31,6 +31,10 @@ CadastroWindow::CadastroWindow(PessoasStorage& storage)
 CadastroWindow::~CadastroWindow() {
 }
 
+CadastroWindow::signal_type CadastroWindow::signal_people_changed() {
+    return _signal_people_changed;
+}
+
 void CadastroWindow::on_button_salvar_clicked() {
     Pessoa pessoa;
     pessoa.nome = nome_box.entry.get_text();
@@ -57,6 +61,7 @@ void CadastroWindow::on_button_salvar_clicked() {
             msgUpdate.run();
             hide();
         }
+        signal_people_changed().emit(5);
         nome_box.entry.set_text("");
         idade_box.entry.set_text("");
     } catch (...) {

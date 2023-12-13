@@ -16,16 +16,19 @@ ListagemWindow::ListagemWindow(PessoasStorage& storage)
     treeview.set_model(listStore);
 
     treeview.append_column("Nome", modelColumns.col_nome);
-    treeview.append_column("Idade", modelColumns.col_idade);
+    treeview.get_column(0)->set_resizable();
 
-    cadastro_window.signal_hide().connect([this]() {
+    treeview.append_column("Idade", modelColumns.col_idade);
+    treeview.get_column(1)->set_resizable();
+
+    cadastro_window.signal_people_changed().connect([this]() {
         preencherTabela();
     });
 
     preencherTabela();
 
     Gtk::ScrolledWindow* scrolledWindow =
-        Gtk::manage(new Gtk::ScrolledWindow());
+        Gtk::make_managed<Gtk::ScrolledWindow>();
     scrolledWindow->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
     box.pack_start(*scrolledWindow, Gtk::PACK_EXPAND_WIDGET);
@@ -68,13 +71,14 @@ void ListagemWindow::on_button_excluir_clicked() {
 
     if (iter) {
         int id = (*iter)[modelColumns.col_id];
-        Gtk::MessageDialog confirmDialog(*this,
-                                         "Tem certeza que deseja excluir?");
-        confirmDialog.add_button("Cancelar", Gtk::RESPONSE_CANCEL);
+
+        Gtk::MessageDialog confirmDialog(
+            *this, "Tem certeza que deseja excluir?", false,
+            Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
 
         int result = confirmDialog.run();
 
-        if (result == Gtk::RESPONSE_OK) {
+        if (result == Gtk::RESPONSE_YES) {
             storage.apaga(id);
 
             Gtk::MessageDialog successMsg(*this, "Removida com sucesso!");

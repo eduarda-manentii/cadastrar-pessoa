@@ -13,6 +13,9 @@ class CadastroWindow : public Gtk::Window {
 
     virtual ~CadastroWindow();
 
+    using signal_type = sigc::signal<void(int)>;
+    signal_type signal_people_changed();
+
    protected:
     void on_button_salvar_clicked();
 
@@ -24,6 +27,7 @@ class CadastroWindow : public Gtk::Window {
     EntryBox nome_box;
     EntryBox idade_box;
     Gtk::Button button_salvar;
+    signal_type _signal_people_changed;
 };
 
 #endif  // CADASTRO_WINDOW_H
