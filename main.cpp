@@ -45,10 +45,6 @@ int testes() {
                   << std::endl;
     };
 
-    for (const auto& [key, value] : ps.pessoas) {
-        print(value);
-    }
-
     Pessoa p3 = ps.busca(2);
     std::cout << p3.nome << std::endl;
 

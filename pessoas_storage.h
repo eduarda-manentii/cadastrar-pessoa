@@ -6,9 +6,6 @@
 #include "pessoa.h"
 
 struct PessoasStorage {
-    std::map<int, Pessoa> pessoas;
-    int seq = 1;
-
     void insere(Pessoa& pessoa);
 
     Pessoa busca(int id);
@@ -25,4 +22,8 @@ struct PessoasStorage {
     }
 
     void atualiza(Pessoa& pessoa);
+
+   private:
+    std::map<int, Pessoa> pessoas;
+    int seq = 1;
 };
