@@ -22,10 +22,12 @@ class ListagemWindow : public Gtk::Window {
             add(col_pessoa);
             add(col_nome);
             add(col_idade);
+            add(col_sexo);
         }
         Gtk::TreeModelColumn<Pessoa> col_pessoa;
         Gtk::TreeModelColumn<Glib::ustring> col_nome;
         Gtk::TreeModelColumn<int> col_idade;
+        Gtk::TreeModelColumn<Glib::ustring> col_sexo;
     };
 
     ModelColumns modelColumns;

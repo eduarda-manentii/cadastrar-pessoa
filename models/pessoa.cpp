@@ -10,6 +10,7 @@ void Table<Pessoa>::schema() {
     pk("id", &Pessoa::id);
     column("name", &Pessoa::nome);
     column("idade", &Pessoa::idade);
+    column("sexo", &Pessoa::sexo);
 }
 
 }  // namespace persistent

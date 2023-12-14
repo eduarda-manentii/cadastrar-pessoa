@@ -1,6 +1,7 @@
 #include "cadastro_window.h"
 
 #include <iostream>
+#include <optional>
 #include <string>
 
 CadastroWindow::CadastroWindow()
@@ -10,12 +11,15 @@ CadastroWindow::CadastroWindow()
     set_modal(true);
 
     idade_box.entry.set_max_length(3);
+    sexo_combobox.append("Feminino");
+    sexo_combobox.append("Masculino");
 
     button_salvar.signal_clicked().connect(
         sigc::mem_fun(*this, &CadastroWindow::on_button_salvar_clicked));
 
     box.add(nome_box);
     box.add(idade_box);
+    box.add(sexo_combobox);
     box.add(button_salvar);
 
     add(box);
@@ -36,9 +40,10 @@ void CadastroWindow::on_button_salvar_clicked() {
         pessoa = *this->pessoa;
     }
     pessoa.nome = nome_box.entry.get_text();
+    pessoa.sexo = sexo_combobox.get_active_text();
 
-    if (pessoa.nome.empty()) {
-        Gtk::MessageDialog msg(*this, "O campo de nome não pode estar vazio.");
+    if (pessoa.nome.empty() || pessoa.sexo.empty()) {
+        Gtk::MessageDialog msg(*this, "Todos os campos devem ser preenchidos.");
         msg.run();
         return;
     }
@@ -60,6 +65,7 @@ void CadastroWindow::on_button_salvar_clicked() {
         signal_people_changed().emit(5);
         nome_box.entry.set_text("");
         idade_box.entry.set_text("");
+        sexo_combobox.set_active(-1);
     } catch (...) {
         Gtk::MessageDialog ErrorMsg(*this, "A idade é inválida");
         ErrorMsg.run();
@@ -71,6 +77,7 @@ void CadastroWindow::setModoEdicao(const std::optional<Pessoa>& pessoa) {
         this->pessoa = pessoa;
         nome_box.entry.set_text(pessoa->nome);
         idade_box.entry.set_text(std::to_string(pessoa->idade));
+        sexo_combobox.set_active_text(pessoa->sexo);
     } else {
         this->pessoa = {};
         nome_box.entry.set_text("");

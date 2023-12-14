@@ -23,6 +23,9 @@ ListagemWindow::ListagemWindow()
     treeview.append_column("Idade", modelColumns.col_idade);
     treeview.get_column(1)->set_resizable();
 
+    treeview.append_column("Sexo", modelColumns.col_sexo);
+    treeview.get_column(1)->set_resizable();
+
     cadastro_window.signal_people_changed().connect([this](int n) {
         preencherTabela();
     });
@@ -65,6 +68,7 @@ void ListagemWindow::preencherTabela() {
         row[modelColumns.col_pessoa] = p;
         row[modelColumns.col_nome] = p.nome;
         row[modelColumns.col_idade] = p.idade;
+        row[modelColumns.col_sexo] = p.sexo;
     });
 }
 

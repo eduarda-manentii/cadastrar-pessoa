@@ -26,6 +26,7 @@ class CadastroWindow : public Gtk::Window {
     Gtk::VBox box;
     EntryBox nome_box;
     EntryBox idade_box;
+    Gtk::ComboBoxText sexo_combobox;
     Gtk::Button button_salvar;
     signal_type _signal_people_changed;
 };
