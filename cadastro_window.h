@@ -3,13 +3,15 @@
 
 #include <gtkmm.h>
 
+#include <optional>
+
 #include "entry_box.h"
-#include "pessoas_storage.h"
+#include "models/pessoa.h"
 
 class CadastroWindow : public Gtk::Window {
    public:
-    CadastroWindow(PessoasStorage& storage);
-    void setModoEdicao(bool modoEdicao, int pessoaId);
+    CadastroWindow();
+    void setModoEdicao(const std::optional<Pessoa>& pessoa = {});
 
     virtual ~CadastroWindow();
 
@@ -19,9 +21,7 @@ class CadastroWindow : public Gtk::Window {
    protected:
     void on_button_salvar_clicked();
 
-    PessoasStorage& storage;
-    bool modoEdicao;
-    int pessoaId;
+    std::optional<Pessoa> pessoa;
 
     Gtk::VBox box;
     EntryBox nome_box;

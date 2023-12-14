@@ -3,19 +3,13 @@
 #include <iostream>
 #include <string>
 
-#include "pessoa.h"
-#include "pessoas_storage.h"
-
-CadastroWindow::CadastroWindow(PessoasStorage& storage)
-    : storage(storage),
-      modoEdicao(false),
-      pessoaId(0),
-      nome_box("Nome"),
-      idade_box("Idade"),
-      button_salvar("Salvar") {
+CadastroWindow::CadastroWindow()
+    : nome_box("Nome"), idade_box("Idade"), button_salvar("Salvar") {
     set_title("Cadastro");
     set_border_width(10);
     set_modal(true);
+
+    idade_box.entry.set_max_length(3);
 
     button_salvar.signal_clicked().connect(
         sigc::mem_fun(*this, &CadastroWindow::on_button_salvar_clicked));
@@ -37,10 +31,13 @@ CadastroWindow::signal_type CadastroWindow::signal_people_changed() {
 
 void CadastroWindow::on_button_salvar_clicked() {
     Pessoa pessoa;
-    pessoa.nome = nome_box.entry.get_text();
-    std::string nome = pessoa.nome;
 
-    if (nome.empty()) {
+    if (this->pessoa) {
+        pessoa = *this->pessoa;
+    }
+    pessoa.nome = nome_box.entry.get_text();
+
+    if (pessoa.nome.empty()) {
         Gtk::MessageDialog msg(*this, "O campo de nome não pode estar vazio.");
         msg.run();
         return;
@@ -48,18 +45,17 @@ void CadastroWindow::on_button_salvar_clicked() {
 
     try {
         pessoa.idade = std::stoi(idade_box.entry.get_text());
-        if (!modoEdicao) {
-            storage.insere(pessoa);
-
-            Gtk::MessageDialog msgInsert(*this,
-                                         "Pessoa cadastrada com sucesso!");
-            msgInsert.run();
-        } else {
-            pessoa.id = pessoaId;
-            storage.atualiza(pessoa);
+        if (this->pessoa) {
+            pessoa.save();
             Gtk::MessageDialog msgUpdate(*this, "Pessoa alterada com sucesso!");
             msgUpdate.run();
             hide();
+
+        } else {
+            pessoa.save();
+            Gtk::MessageDialog msgInsert(*this,
+                                         "Pessoa cadastrada com sucesso!");
+            msgInsert.run();
         }
         signal_people_changed().emit(5);
         nome_box.entry.set_text("");
@@ -70,15 +66,13 @@ void CadastroWindow::on_button_salvar_clicked() {
     }
 }
 
-void CadastroWindow::setModoEdicao(bool modoEdicao, int pessoaId) {
-    this->modoEdicao = modoEdicao;
-    this->pessoaId = pessoaId;
-
-    if (modoEdicao) {
-        const Pessoa& pessoaParaEditar = storage.busca(pessoaId);
-        nome_box.entry.set_text(pessoaParaEditar.nome);
-        idade_box.entry.set_text(std::to_string(pessoaParaEditar.idade));
+void CadastroWindow::setModoEdicao(const std::optional<Pessoa>& pessoa) {
+    if (pessoa) {
+        this->pessoa = pessoa;
+        nome_box.entry.set_text(pessoa->nome);
+        idade_box.entry.set_text(std::to_string(pessoa->idade));
     } else {
+        this->pessoa = {};
         nome_box.entry.set_text("");
         idade_box.entry.set_text("");
     }

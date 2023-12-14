@@ -4,11 +4,10 @@
 #include <gtkmm.h>
 
 #include "cadastro_window.h"
-#include "pessoas_storage.h"
 
 class ListagemWindow : public Gtk::Window {
    public:
-    ListagemWindow(PessoasStorage& storage);
+    ListagemWindow();
     virtual ~ListagemWindow();
 
     void mostra();
@@ -20,11 +19,11 @@ class ListagemWindow : public Gtk::Window {
     class ModelColumns : public Gtk::TreeModel::ColumnRecord {
        public:
         ModelColumns() {
-            add(col_id);
+            add(col_pessoa);
             add(col_nome);
             add(col_idade);
         }
-        Gtk::TreeModelColumn<int> col_id;
+        Gtk::TreeModelColumn<Pessoa> col_pessoa;
         Gtk::TreeModelColumn<Glib::ustring> col_nome;
         Gtk::TreeModelColumn<int> col_idade;
     };
@@ -38,7 +37,6 @@ class ListagemWindow : public Gtk::Window {
     Gtk::Button button_excluir;
     Gtk::Button button_editar;
 
-    PessoasStorage& storage;
     CadastroWindow cadastro_window;
 
     void preencherTabela();

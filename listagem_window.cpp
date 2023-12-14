@@ -2,12 +2,12 @@
 
 #include <gtkmm.h>
 
-ListagemWindow::ListagemWindow(PessoasStorage& storage)
+#include "models/pessoa.h"
+
+ListagemWindow::ListagemWindow()
     : listStore(Gtk::ListStore::create(modelColumns)),
       button_excluir("Excluir"),
-      button_editar("Editar"),
-      storage(storage),
-      cadastro_window(storage) {
+      button_editar("Editar") {
     set_title("Listagem");
     set_border_width(10);
     set_modal(true);
@@ -16,12 +16,14 @@ ListagemWindow::ListagemWindow(PessoasStorage& storage)
     treeview.set_model(listStore);
 
     treeview.append_column("Nome", modelColumns.col_nome);
-    treeview.get_column(0)->set_resizable();
+    auto col = treeview.get_column(0);
+    col->set_resizable();
+    col->set_fixed_width(150);
 
     treeview.append_column("Idade", modelColumns.col_idade);
     treeview.get_column(1)->set_resizable();
 
-    cadastro_window.signal_people_changed().connect([this]() {
+    cadastro_window.signal_people_changed().connect([this](int n) {
         preencherTabela();
     });
 
@@ -58,9 +60,9 @@ void ListagemWindow::mostra() {
 
 void ListagemWindow::preencherTabela() {
     listStore->clear();
-    storage.each([&](const Pessoa& p) {
+    Pessoa::all().each([&](const Pessoa& p) {
         Gtk::TreeModel::Row row = *(listStore->append());
-        row[modelColumns.col_id] = p.id;
+        row[modelColumns.col_pessoa] = p;
         row[modelColumns.col_nome] = p.nome;
         row[modelColumns.col_idade] = p.idade;
     });
@@ -70,7 +72,7 @@ void ListagemWindow::on_button_excluir_clicked() {
     auto iter = treeview.get_selection()->get_selected();
 
     if (iter) {
-        int id = (*iter)[modelColumns.col_id];
+        Pessoa pessoa = (*iter)[modelColumns.col_pessoa];
 
         Gtk::MessageDialog confirmDialog(
             *this, "Tem certeza que deseja excluir?", false,
@@ -79,8 +81,7 @@ void ListagemWindow::on_button_excluir_clicked() {
         int result = confirmDialog.run();
 
         if (result == Gtk::RESPONSE_YES) {
-            storage.apaga(id);
-
+            pessoa.delete_();
             Gtk::MessageDialog successMsg(*this, "Removida com sucesso!");
             successMsg.run();
 
@@ -96,8 +97,8 @@ void ListagemWindow::on_button_editar_clicked() {
     auto iter = treeview.get_selection()->get_selected();
 
     if (iter) {
-        int id = (*iter)[modelColumns.col_id];
-        cadastro_window.setModoEdicao(true, id);
+        Pessoa pessoa = (*iter)[modelColumns.col_pessoa];
+        cadastro_window.setModoEdicao(pessoa);
         cadastro_window.show();
 
     } else {

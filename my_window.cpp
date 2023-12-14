@@ -1,10 +1,7 @@
 #include "my_window.h"
 
-MyWindow::MyWindow(PessoasStorage& storage)
-    : button_cadastro("Cadastro"),
-      button_listagem("Listagem"),
-      listagem_window(storage),
-      cadastro_window(storage) {
+MyWindow::MyWindow()
+    : button_cadastro("Cadastro"), button_listagem("Listagem") {
     set_title("Janela Principal");
     set_border_width(10);
     set_modal();
@@ -22,7 +19,7 @@ MyWindow::MyWindow(PessoasStorage& storage)
 }
 
 void MyWindow::on_button_cadastro_clicked() {
-    cadastro_window.setModoEdicao(false, 0);
+    cadastro_window.setModoEdicao();
     cadastro_window.show();
 }
 

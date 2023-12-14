@@ -8,7 +8,7 @@
 
 class MyWindow : public Gtk::Window {
    public:
-    MyWindow(PessoasStorage& storage);
+    MyWindow();
 
    protected:
     void on_button_cadastro_clicked();
